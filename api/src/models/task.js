@@ -10,7 +10,18 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+  Task.belongsTo(models.Project, {
+    foreignKey: "project_id",
+    as: "Project",
+    onDelete: "CASCADE"
+  
+  })
+
+  Task.hasMany(models.TaskAssignment, {
+    foreignKey: "task_id",
+    onDelete: "CASCADE"
+  })
+
     }
   }
   Task.init({

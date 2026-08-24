@@ -3,25 +3,24 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class users extends Model {
+  class Refreshtoken extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-users.hasMany(models.org_members, { foreignKey: 'user_id' });
-users.hasMany(models.TaskAssignment, { foreignKey: 'user_id' });
-users.hasMany(models.Comment, { foreignKey: 'user_id' });
+      // define association here
     }
   }
-  users.init({
-    name: DataTypes.STRING,
-    email: DataTypes.STRING,
-    password: DataTypes.STRING
+  Refreshtoken.init({
+    user_id: DataTypes.INTEGER,
+    hashed_token: DataTypes.STRING,
+    revoked: DataTypes.BOOLEAN,
+    expires_at: DataTypes.DATE
   }, {
     sequelize,
-    modelName: 'users',
+    modelName: 'Refreshtoken',
   });
-  return users;
+  return Refreshtoken;
 };

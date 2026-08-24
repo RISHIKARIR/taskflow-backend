@@ -1,21 +1,86 @@
-services:              # ye keyword hai — sabhi containers isi ke andar likhe jaate hain
-  postgres:             # ek service ka naam (custom, tum kuch bhi rakh sakte ho)
-    image: postgres:16  # Docker Hub se ready-made Postgres image use ho rahi hai
-    environment:        # container ke andar environment variables set ho rahe hain
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: taskflow-postgres
+    restart: unless-stopped
+    environment:
       POSTGRES_USER: taskflow
-      POSTGRES_PASSWORD: rishi@taskflow0098
+      POSTGRES_PASSWORD: taskflow2005
       POSTGRES_DB: taskflow_db
     ports:
-      - "5432:5432"     # host_port:container_port mapping
+      - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data   # data persist karne ke liye
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U taskflow"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
-  redis:                # doosri service — Redis
+  redis:
     image: redis:7
+    container_name: taskflow-redis
+    restart: unless-stopped
     ports:
       - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
-volumes:                # named volume declare ho raha hai (data storage ke liye)
-  pgdata:
+  api:
+    build: ./api
+    container_name: taskflow-api
+    restart: unless-stopped
+    command: npm start
+    environment:
+      DB_USER: taskflow
+      DB_PASSWORD: taskflow2005
+      DB_NAME: taskflow_db
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DATABASE_URL: postgres://taskflow:taskflow2005@postgres:5432/taskflow_db
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: parthJWT_SECRET
+      JWT_REFRESH_SECRET: parthJWT_REFRESH_SECRET
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./api:/app
+      - /app/node_modules
 
+  worker:
+    build: ./api
+    container_name: taskflow-worker
+    restart: unless-stopped
+    command: node src/worker.js
+    environment:
+      DB_USER: taskflow
+      DB_PASSWORD: taskflow2005
+      DB_NAME: taskflow_db
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DATABASE_URL: postgres://taskflow:taskflow2005@postgres:5432/taskflow_db
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: parthJWT_SECRET
+      JWT_REFRESH_SECRET: parthJWT_REFRESH_SECRET
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./api:/app
+      - /app/node_modules
 
+volumes:
+  postgres_data:

@@ -10,7 +10,19 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      organizations.hasMany(models.Project,{
+        foreignKey : "organization_id",
+        as : "projects"
+      })
+
+
+        organizations.hasMany(models.org_members, {
+    foreignKey: "organization_id",
+    onDelete: "CASCADE"
+    // CASCADE: membership records are meaningless without the organization
+  })
+
+  
     }
   }
   organizations.init({
