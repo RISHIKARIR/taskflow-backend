@@ -1,16 +1,31 @@
 require("dotenv").config();
 
+
 const crypto = require('crypto');
 const jwt = require("jsonwebtoken");
 const { Refreshtoken } = require("../models");
+const { org_members } = require("../models");
 
 function hashToken(token) {
   return crypto.createHash('sha256').update(token).digest('hex');
 }
 
 async function issueTokens(user) {
+
+  const membership = await org_members.findOne({
+    where: { user_id: user.id },
+  });
+
+
+
+
+
   const accessToken = jwt.sign(
-    { sub: user.id, email: user.email },
+    {
+      sub: user.id, email: user.email,
+      orgId: membership ? membership.organization_id : null,
+      role: membership ? membership.role : null,
+    },
     process.env.JWT_SECRET,
     { expiresIn: "15m" }
   );

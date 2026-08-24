@@ -9,6 +9,24 @@ async function listMembers(req, res, next) {
   }
 }
  
+async function addMember(req, res, next) {
+
+  try {
+    const member = await orgMemberService.addMember(
+      req.user.orgId,
+      req.body.user_id  
+    );
+
+    res.status(201).json({
+      message: "Member added successfully",
+      data: member
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+
 async function removeMember(req, res, next) {
   try {
     await orgMemberService.removeMember(req.user.orgId, req.params.userId);
@@ -31,4 +49,8 @@ async function updateMemberRole(req, res, next) {
   }
 }
  
-module.exports = { listMembers, removeMember, updateMemberRole };
+
+
+
+
+module.exports = { listMembers, removeMember, updateMemberRole ,addMember};

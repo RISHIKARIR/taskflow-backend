@@ -1,7 +1,8 @@
 
 const { sequelize, Project: ProjectModel, Task: TaskModel } = require("../models");
 const { AppError: AppErr } = require("../utils/errors");
- 
+
+
 async function createProject(orgId, data) {
   return ProjectModel.create({
     name: data.name,

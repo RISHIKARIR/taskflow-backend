@@ -1,10 +1,13 @@
 const taskService = require("../services/taskService");
 const { parsePagination, buildPaginatedResponse } = require("../utils/pagination");
 const { validateCreateTask } = require("../validators/task.validator");
- 
+const { AppError } = require("../utils/errors"); 
+
+
 async function createTask(req, res, next) {
   try {
     const validatedData = validateCreateTask(req.body);
+
     const task = await taskService.createTask(req.user.orgId, validatedData);
     res.status(201).json(task);
   } catch (err) {
@@ -51,7 +54,22 @@ async function deleteTask(req, res, next) {
  
 async function assignTask(req, res, next) {
   try {
+
+    const userId = req.body.userId;
+
+     if (!userId) {
+      throw new AppError(
+        "userId is required",
+        "USER_ID_REQUIRED",
+        400
+      );
+    }
+
     const assignment = await taskService.assignTask(req.user.orgId, req.params.id, req.body.userId,req.user.id);
+
+    
+
+
     res.status(201).json(assignment);
   } catch (err) {
     next(err);

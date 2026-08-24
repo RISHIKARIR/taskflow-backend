@@ -5,7 +5,7 @@ const taskController = require("../controllers/task.controller");
 
 const router = Router();
 
-router.use(authenticate); // sab routes protected
+router.use(authenticate); 
 
 router.post("/", taskController.createTask);
 router.get("/", taskController.listTasks);

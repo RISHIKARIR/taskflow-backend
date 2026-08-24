@@ -24,7 +24,8 @@ module.exports = (sequelize, DataTypes) => {
   }
   org_members.init({
     user_id: DataTypes.INTEGER,
-    organization_id: DataTypes.INTEGER
+    organization_id: DataTypes.INTEGER,
+  role: DataTypes.ENUM('org_admin', 'member'),
   }, {
     sequelize,
     modelName: 'org_members',

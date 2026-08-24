@@ -11,6 +11,13 @@ const emailQueue = new Queue("email-notifications", {
   },
 });
  
+
+const emailDLQ = new Queue("email-notifications-dlq", {
+  connection: redisClient,
+});
+
+
+
 async function enqueueAssignmentEmail(taskId, userId, assignedByUserId) {
   return emailQueue.add("send-assignment-email", {
     taskId,
@@ -20,4 +27,4 @@ async function enqueueAssignmentEmail(taskId, userId, assignedByUserId) {
   });
 }
  
-module.exports = { emailQueue, enqueueAssignmentEmail };
+module.exports = { emailQueue, enqueueAssignmentEmail,emailDLQ };

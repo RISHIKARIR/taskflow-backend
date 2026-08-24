@@ -14,7 +14,12 @@ router.get("/:id", projectController.getProject);
 router.get("/:id/dashboard", projectController.getDashboard);
 router.patch("/:id", projectController.updateProject);
 
-// sirf org_admin delete kar sakta hai
+
+
+
 router.delete("/:id", requireRole("org_admin"), projectController.deleteProject);
+
+
+
 
 module.exports = router;

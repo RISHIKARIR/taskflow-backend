@@ -26,7 +26,7 @@ function validateCreateTask(body) {
     status: body.status || "todo",
     priority: body.priority || "medium",
     project_id: body.project_id,
-    dueDate: body.dueDate ? new Date(body.dueDate) : null,
+    due_date: body.due_date ? new Date(body.due_date) : null,
   };
 }
  

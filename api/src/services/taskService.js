@@ -1,15 +1,22 @@
 const { Op } = require("sequelize");
 const { Task, Project, org_members: OrgMember, TaskAssignment } = require("../models");
 const { AppError } = require("../utils/errors");
+const { enqueueAssignmentEmail } = require("../queues/emailQueue");
+const { sequelize } = require("../models");
  
 async function createTask(orgId, data) {
-  // project org ka hai ya nahi verify karo (Task ka apna org_id field nahi hai)
+  
   const project = await Project.findOne({
     where: { id: data.project_id, organization_id: orgId },
   });
   if (!project) {
     throw new AppError("Project not found", "PROJECT_NOT_FOUND", 404);
   }
+
+  console.log(data,"nibguigbui")
+  console.log("Creating task with data", data.due_date);
+
+  
  
   return Task.create({
     title: data.title,
@@ -83,20 +90,61 @@ async function updateTask(orgId, taskId, data) {
  
 async function deleteTask(orgId, taskId) {
   const task = await getTaskById(orgId, taskId);
-  return task.destroy(); // hard delete — model has no deletedAt column
+  return task.destroy(); 
 }
  
-async function assignTask(orgId, taskId, userId) {
+async function assignTask(orgId, taskId, userId, assignedByUserId) {
+
+  const transaction = await sequelize.transaction();
+
+  try {
+
   await getTaskById(orgId, taskId);
- 
+
   const member = await OrgMember.findOne({
-    where: { user_id: userId, organization_id: orgId },
+    where: {
+      user_id: userId,
+      organization_id: orgId
+    },
+    transaction
   });
+
   if (!member) {
-    throw new AppError("User does not belong to this organization", "USER_NOT_IN_ORG", 403);
+    throw new AppError(
+      "User does not belong to this organization",
+      "USER_NOT_IN_ORG",
+      403
+    );
   }
- 
-  return TaskAssignment.create({ task_id: taskId, user_id: userId });
+
+  const assignment = await TaskAssignment.create({
+    task_id: taskId,
+    user_id: userId
+  },
+{transaction});
+
+  const job = await enqueueAssignmentEmail(
+    taskId,
+    userId,
+    assignedByUserId
+  );
+
+
+  await transaction.commit();
+
+  return {
+    assignment,
+    jobId: job.id
+  };
+
+
+
+}catch(err){
+  await transaction.rollback();
+  throw err;
+}
+
+
 }
  
 async function unassignTask(orgId, taskId, userId) {
