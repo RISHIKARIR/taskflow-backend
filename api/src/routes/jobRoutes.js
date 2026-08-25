@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const authenticate = require("../middlewares/auth.middleware"); // matches your actual export (no braces)
+const authenticate = require("../middlewares/auth.middleware"); 
 const { getJobStatus } = require("../controllers/jobController");
  
 const router = Router();

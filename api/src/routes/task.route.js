@@ -1,4 +1,4 @@
-// src/routes/taskRoutes.js
+
 const { Router } = require("express");
 const  authenticate  = require("../middlewares/auth.middleware");
 const taskController = require("../controllers/task.controller");

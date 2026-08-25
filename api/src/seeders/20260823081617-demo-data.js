@@ -16,7 +16,7 @@ module.exports = {
   async up (queryInterface, Sequelize) {
     const now = new Date();
  
-    // ---- 2 organizations ----
+    
     await queryInterface.bulkInsert('organizations', [
       { name: 'Acme Corp', createdAt: now, updatedAt: now },
       { name: 'Globex Inc', createdAt: now, updatedAt: now },
@@ -26,9 +26,9 @@ module.exports = {
     );
     const orgRows = orgs[0];
     const org1Id = orgRows[0].id; 
-    const org2Id = orgRows[1].id; // Globex Inc
+    const org2Id = orgRows[1].id; 
  
-    // ---- 5 users (same password for all: Password123!) ----
+ // (same password : Password123!) 
     const passwordHash = await bcrypt.hash('Password123!', 12);
     const userNames = ['Alice', 'Bob', 'Charlie', 'Diana', 'Ethan'];
  
@@ -37,7 +37,7 @@ module.exports = {
       userNames.map((name) => ({
         name,
         email: `${name.toLowerCase()}@taskflow.dev`,
-        password: passwordHash, // change to `password_hash` below if that's your actual column name
+        password: passwordHash, 
         createdAt: now,
         updatedAt: now,
       }))
@@ -46,11 +46,11 @@ module.exports = {
       `SELECT id, name FROM users ORDER BY id;`
     );
     const userRows = usersResult[0];
-    // map name -> id for readability
+   
     const ids = {};
     userRows.forEach((u) => (ids[u.name] = u.id));
  
-    // ---- org_members ----
+    
     await queryInterface.bulkInsert('org_members', [
       { user_id: ids['Alice'], organization_id: org1Id, createdAt: now, updatedAt: now },
       { user_id: ids['Bob'], organization_id: org1Id, createdAt: now, updatedAt: now },
@@ -60,7 +60,7 @@ module.exports = {
       { user_id: ids['Charlie'], organization_id: org2Id, createdAt: now, updatedAt: now },
     ]);
  
-    // ---- projects ----
+   
     await queryInterface.bulkInsert('Projects', [
       { name: 'Website Revamp', description: 'Revamp marketing site', organization_id: org1Id, createdAt: now, updatedAt: now },
       { name: 'Mobile App', description: 'New mobile client', organization_id: org1Id, createdAt: now, updatedAt: now },
@@ -71,7 +71,7 @@ module.exports = {
     );
     const projRows = projResult[0];
  
-    // ---- 12 tasks distributed across projects ----
+    
     const taskTitles = [
       'Set up CI pipeline', 'Design landing page', 'Fix login bug',
       'Write API docs', 'Refactor auth module', 'Add dark mode',
@@ -99,7 +99,7 @@ module.exports = {
     );
     const allTasks = tasksResult[0];
  
-    // build project_id -> org_id map for picking valid assignees
+
     const projOrgMap = {};
     projRows.forEach((p) => (projOrgMap[p.id] = p.organization_id));
  

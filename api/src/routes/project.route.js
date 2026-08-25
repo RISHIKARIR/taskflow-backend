@@ -1,4 +1,4 @@
-// src/routes/projectRoutes.js
+
 const { Router } = require("express");
 const  authenticate  = require("../middlewares/auth.middleware");
 const  requireRole  = require("../middlewares/role.middleware");
@@ -6,7 +6,7 @@ const projectController = require("../controllers/project.controller");
 
 const router = Router();
 
-router.use(authenticate); // sab routes protected
+router.use(authenticate); 
 
 router.post("/", projectController.createProject);
 router.get("/", projectController.listProjects);

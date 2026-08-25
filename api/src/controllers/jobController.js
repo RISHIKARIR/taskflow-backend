@@ -6,7 +6,7 @@ async function getJobStatus(req, res, next) {
     const job = await emailQueue.getJob(req.params.id);
     if (!job) throw new AppError("Job not found", "JOB_NOT_FOUND", 404);
  
-    const state = await job.getState(); // waiting|active|completed|failed|delayed
+    const state = await job.getState(); 
  
     const statusMap = {
       waiting: "pending",

@@ -1,7 +1,7 @@
 const { Worker } = require("bullmq");
 const redisClient = require("../lib/redisClient");
 const models = require("../models");
-const { users: User, Task } = require("../models"); // adjust names to match your models/index.js exports
+const { users: User, Task } = require("../models");
 const { emailDLQ } = require("../queues/emailQueue");
 
 

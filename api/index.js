@@ -20,6 +20,13 @@ app.use("/jobs", jobRoutes);
 
 app.use("/members", orgMemberRoutes);
 
+
+app.get("/api-docs/swagger.json", (req, res) => {
+  res.json(swaggerDocument);
+});
+
+
+
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 

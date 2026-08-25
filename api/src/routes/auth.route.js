@@ -7,7 +7,7 @@ const authController = require('../controllers/auth.controller');
 
 const router = express.Router();
 
-// Rate limit: 10 requests/minute/IP on all auth endpoints (assignment requirement)
+// Rate limit
 const authLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: 10,

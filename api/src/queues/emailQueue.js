@@ -5,9 +5,9 @@ const emailQueue = new Queue("email-notifications", {
   connection: redisClient,
   defaultJobOptions: {
     attempts: 3,
-    backoff: { type: "exponential", delay: 1000 }, // 1s -> 2s -> 4s
+    backoff: { type: "exponential", delay: 1000 }, 
     removeOnComplete: 100,
-    removeOnFail: false, // keep failed jobs = dead-letter queue
+    removeOnFail: false, 
   },
 });
  

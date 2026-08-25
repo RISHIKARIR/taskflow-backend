@@ -1,4 +1,4 @@
-// src/utils/errors.js
+
 class AppError extends Error {
   constructor(message, code, statusCode = 400, details = {}) {
     super(message);
